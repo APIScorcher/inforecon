@@ -1,6 +1,6 @@
 
 ### Cloudflare scan took from https://github.com/christophetd/CloudFlair  Kindly check it out :) ###
-
+import os
 import sys
 import requests
 from shodan import Shodan
@@ -11,12 +11,16 @@ import nmap
 
 api = Shodan('') # Get your key from https://account.shodan.io
 
+
+ 
 if len(sys.argv) < 2:
     print("Usage: python3 " + sys.argv[0] + " <url>")
     sys.exit(1)
 
 target = sys.argv[1]
 IPAddr = socket.gethostbyname(target)
+
+os.system('cls' if os.name == 'nt' else 'clear')
 
 print("""
 ██ ███    ██ ███████  ██████  ██████  ███████  ██████  ██████  ███    ██ 
@@ -25,6 +29,9 @@ print("""
 ██ ██  ██ ██ ██      ██    ██ ██   ██ ██      ██      ██    ██ ██  ██ ██ 
 ██ ██   ████ ██       ██████  ██   ██ ███████  ██████  ██████  ██   ████                                                                         
 """)
+
+
+
 
 def getIPInfo():
     try:
@@ -96,11 +103,34 @@ def shodanLookUp():
             Port: {}
             Banner: {}
             """.format(item['port'], item['data']))
-    else:
-        sys.exit(0)
 
+
+
+def subDomainEnum():
+    print("\n[*] Subdomain Enumeration:")
+    list = input("Enter wordlist location: ")
+    file = open(list).read() 
+    subdomains = file.splitlines()
+
+    print("[*] Started Scanning...")
+
+    for domain in subdomains:
+        try:
+            urlCheck = f"http://{domain}.{sys.argv[1]}"
+        except:
+            urlCheck = f"https://{domain}.{sys.argv[1]}"
+
+        try:
+            requests.get(urlCheck)
+        except  requests.ConnectionError:
+            pass
+        
+        else:
+            print("[+] Subdomain Found: ", urlCheck)
+    
 
 getIPInfo()
 scanPorts()
 cloudflareScan()
 shodanLookUp()
+subDomainEnum()
