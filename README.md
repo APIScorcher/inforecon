@@ -8,9 +8,7 @@ python3 inforecon.py {URL}
 Inforecon is a simple tool that is used to scan websites and get information.
 
 # What it can do
-Currently it can get website banners, IP and scan common ports, Shodan Scan, CloudFlare Detection (Massive thanks to christophetd, https://github.com/christophetd/)
-
-*Subdomain enumeration coming soon*
+Currently it can get website banners, IP and scan common ports, Shodan Scan, CloudFlare Detection (Massive thanks to christophetd, https://github.com/christophetd/), subdomain enumeration
 
 # Why
 because I was bored and wanted to make something thats actually good..
