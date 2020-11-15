@@ -9,10 +9,10 @@ import json
 import cloudflare
 import nmap
 
-api = Shodan('') # Get your key from https://account.shodan.io
+# Get your key from https://account.shodan.io
+api = Shodan('wC0RF8wJx3rTR5sEQF9r52LcTMl11erE')
 
 
- 
 if len(sys.argv) < 2:
     print("Usage: python3 " + sys.argv[0] + " <url>")
     sys.exit(1)
@@ -23,18 +23,22 @@ IPAddr = socket.gethostbyname(target)
 os.system('cls' if os.name == 'nt' else 'clear')
 
 print("""
-██ ███    ██ ███████  ██████  ██████  ███████  ██████  ██████  ███    ██ 
-██ ████   ██ ██      ██    ██ ██   ██ ██      ██      ██    ██ ████   ██ 
-██ ██ ██  ██ █████   ██    ██ ██████  █████   ██      ██    ██ ██ ██  ██ 
-██ ██  ██ ██ ██      ██    ██ ██   ██ ██      ██      ██    ██ ██  ██ ██ 
-██ ██   ████ ██       ██████  ██   ██ ███████  ██████  ██████  ██   ████                                                                         
+@@@  @@@  @@@  @@@@@@@@   @@@@@@   @@@@@@@   @@@@@@@@   @@@@@@@   @@@@@@   @@@  @@@  
+@@@  @@@@ @@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@ @@@  
+@@!  @@!@!@@@  @@!       @@!  @@@  @@!  @@@  @@!       !@@       @@!  @@@  @@!@!@@@  
+!@!  !@!!@!@!  !@!       !@!  @!@  !@!  @!@  !@!       !@!       !@!  @!@  !@!!@!@!  
+!!@  @!@ !!@!  @!!!:!    @!@  !@!  @!@!!@!   @!!!:!    !@!       @!@  !@!  @!@ !!@!  
+!!!  !@!  !!!  !!!!!:    !@!  !!!  !!@!@!    !!!!!:    !!!       !@!  !!!  !@!  !!!  
+!!:  !!:  !!!  !!:       !!:  !!!  !!: :!!   !!:       :!!       !!:  !!!  !!:  !!!  
+:!:  :!:  !:!  :!:       :!:  !:!  :!:  !:!  :!:       :!:       :!:  !:!  :!:  !:!  
+ ::   ::   ::   ::       ::::: ::  ::   :::   :: ::::   ::: :::  ::::: ::   ::   ::  
+:    ::    :    :         : :  :    :   : :  : :: ::    :: :: :   : :  :   ::    :                                                                         
 """)
-
-
 
 
 def getIPInfo():
     try:
+        global req
         req = requests.get("https://" + target)
     except:
         req = requests.get("http://" + target)
@@ -85,10 +89,9 @@ def cloudflareScan():
 
 
 def shodanLookUp():
-    shodanInput = input("Would you like to scan website using Shodan? (Y/N): ")
+    shodanInput = input("\nWould you like to scan website using Shodan? (Y/N): ")
     if shodanInput == "y" or shodanInput == "Y":
         host = api.host(IPAddr)
-
 
         # Print general info
         print("""
@@ -105,10 +108,9 @@ def shodanLookUp():
             """.format(item['port'], item['data']))
 
 
-
 def subDomainEnum():
     subdomainInput = input(
-        "Would you like to start a subdomain enumeration? (Y/N): ")
+        "\nWould you like to start a subdomain enumeration? (Y/N): ")
     if subdomainInput == "y" or subdomainInput == "Y":
         print("\n[*] Subdomain Enumeration:")
         list = input("Enter wordlist location: ")
@@ -133,10 +135,31 @@ def subDomainEnum():
     else:
         print("")
 
-    
+def directoryFuzz():
+    directoryInput = input("Would you like to fuzz directories? (Y/N): ")
+    if directoryInput == "y" or directoryInput == "Y":
+        dirWordlist = input("Enter the wordlist: ")
+        try:
+            dirWordlist = open(dirWordlist,"rb")
+            for path in dirWordlist.readlines():
+                path = path.strip().decode("utf-8")
+                try:
+                    urlpath = "http://"+target+"/"+path
+                except:
+                    urlpath = "https://"+target+ "/"+path
+                r = requests.get(urlpath)
+                if r.status_code != 404:
+                    print("[+] {} -> {}".format(r.status_code, urlpath))
+        except Exception as e:
+            print("Error Occured: {}".format(e))
+        
+    else:
+        print("\n")
+
 
 getIPInfo()
 scanPorts()
 cloudflareScan()
 shodanLookUp()
 subDomainEnum()
+directoryFuzz()
