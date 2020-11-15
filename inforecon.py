@@ -107,26 +107,32 @@ def shodanLookUp():
 
 
 def subDomainEnum():
-    print("\n[*] Subdomain Enumeration:")
-    list = input("Enter wordlist location: ")
-    file = open(list).read() 
-    subdomains = file.splitlines()
+    subdomainInput = input(
+        "Would you like to start a subdomain enumeration? (Y/N): ")
+    if subdomainInput == "y" or subdomainInput == "Y":
+        print("\n[*] Subdomain Enumeration:")
+        list = input("Enter wordlist location: ")
+        file = open(list).read()
+        subdomains = file.splitlines()
 
-    print("[*] Started Scanning...")
+        print("[*] Started Scanning...")
 
-    for domain in subdomains:
-        try:
-            urlCheck = f"http://{domain}.{sys.argv[1]}"
-        except:
-            urlCheck = f"https://{domain}.{sys.argv[1]}"
+        for domain in subdomains:
+            try:
+                urlCheck = f"http://{domain}.{sys.argv[1]}"
+            except:
+                urlCheck = f"https://{domain}.{sys.argv[1]}"
 
-        try:
-            requests.get(urlCheck)
-        except  requests.ConnectionError:
-            pass
-        
-        else:
-            print("[+] Subdomain Found: ", urlCheck)
+            try:
+                requests.get(urlCheck)
+            except requests.ConnectionError:
+                pass
+
+            else:
+                print("[+] Subdomain Found: ", urlCheck)
+    else:
+        print("")
+
     
 
 getIPInfo()
