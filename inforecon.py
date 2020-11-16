@@ -10,7 +10,7 @@ import cloudflare
 import nmap
 
 # Get your key from https://account.shodan.io
-api = Shodan('wC0RF8wJx3rTR5sEQF9r52LcTMl11erE')
+api = Shodan('')
 
 
 if len(sys.argv) < 2:
