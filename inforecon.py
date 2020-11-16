@@ -5,6 +5,7 @@ import sys
 import requests
 from shodan import Shodan
 import socket
+from colorama import Fore
 import json
 import cloudflare
 import nmap
@@ -22,7 +23,7 @@ IPAddr = socket.gethostbyname(target)
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
-print("""
+print(Fore.RED + """
 @@@  @@@  @@@  @@@@@@@@   @@@@@@   @@@@@@@   @@@@@@@@   @@@@@@@   @@@@@@   @@@  @@@  
 @@@  @@@@ @@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@ @@@  
 @@!  @@!@!@@@  @@!       @@!  @@@  @@!  @@@  @@!       !@@       @@!  @@@  @@!@!@@@  
@@ -33,7 +34,7 @@ print("""
 :!:  :!:  !:!  :!:       :!:  !:!  :!:  !:!  :!:       :!:       :!:  !:!  :!:  !:!  
  ::   ::   ::   ::       ::::: ::  ::   :::   :: ::::   ::: :::  ::::: ::   ::   ::  
 :    ::    :    :         : :  :    :   : :  : :: ::    :: :: :   : :  :   ::    :                                                                         
-""")
+\n""")
 
 
 def getIPInfo():
@@ -43,7 +44,7 @@ def getIPInfo():
     except:
         req = requests.get("http://" + target)
 
-    print(str(req.headers) + "\n")
+    print(Fore.GREEN + str(req.headers) + "\n")
 
     print("[*] The IP Address of " + target + " is: " + IPAddr + "\n")
 
@@ -59,21 +60,18 @@ def getIPInfo():
 
 
 def scanPorts():
-    choice = input("Would you like to scan for open ports? (Y/N): ")
+    choice = input(Fore.RED + "Would you like to scan for open ports? (Y/N): ")
     if choice == "y" or choice == "Y":
         ports = [21, 22, 23, 25, 53, 80, 110,
                  111, 135, 139, 143, 443, 445, 993, 995, 1723, 3306, 3389, 5900, 8080]
 
         portScanner = nmap.PortScanner()
 
-        print("Scanning ports...")
+        print(Fore.RED + "Scanning ports...")
         for port in ports:
             portscan = portScanner.scan(target, str(port))
-            print("[+] Port", port, "is", portscan['scan']
+            print(Fore.GREEN + "[+] Port", port, "is", portscan['scan']
                   [list(portscan['scan'])[0]]['tcp'][port]['state'])
-        print("[+] \nHost", target, "is", portscan['scan']
-              [list(portscan['scan'])[0]]['status']['state'])
-
     else:
         print("\n")
 
@@ -81,20 +79,20 @@ def scanPorts():
 
 
 def cloudflareScan():
-    print("[+] Starting CloudFlare Scan...")
+    print(Fore.RED + "[+] Starting CloudFlare Scan...")
     if not cloudflare.uses_cloudflare(target):
-        print("[*] '%s' does not seem to be using CloudFlare" % target)
+        print(Fore.GREEN + "[*] '%s' does not seem to be using CloudFlare" % target)
     else:
-        print("[*] '%s' appears to be using CloudFlare" % target)
+        print(Fore.GREEN + "[*] '%s' appears to be using CloudFlare" % target)
 
 
 def shodanLookUp():
-    shodanInput = input("\nWould you like to scan website using Shodan? (Y/N): ")
+    shodanInput = input(Fore.RED + "\nWould you like to scan website using Shodan? (Y/N): ")
     if shodanInput == "y" or shodanInput == "Y":
         host = api.host(IPAddr)
 
         # Print general info
-        print("""
+        print(Fore.GREEN + """
         IP: {}
         Organization: {}
         Operating System: {}
@@ -110,14 +108,14 @@ def shodanLookUp():
 
 def subDomainEnum():
     subdomainInput = input(
-        "\nWould you like to start a subdomain enumeration? (Y/N): ")
+        Fore.RED + "\nWould you like to start a subdomain enumeration? (Y/N): ")
     if subdomainInput == "y" or subdomainInput == "Y":
-        print("\n[*] Subdomain Enumeration:")
+        print(Fore.RED + "\n[*] Subdomain Enumeration:")
         list = input("Enter wordlist location: ")
         file = open(list).read()
         subdomains = file.splitlines()
 
-        print("[*] Started Scanning...")
+        print(Fore.GREEN + "[*] Started Scanning...")
 
         for domain in subdomains:
             try:
@@ -131,16 +129,18 @@ def subDomainEnum():
                 pass
 
             else:
-                print("[+] Subdomain Found: ", urlCheck)
+                print(Fore.GREEN + "[+] Subdomain Found: ", urlCheck)
     else:
         print("")
 
 def directoryFuzz():
-    directoryInput = input("Would you like to fuzz directories? (Y/N): ")
+    directoryInput = input(Fore.RED + "Would you like to fuzz directories? (Y/N): ")
     if directoryInput == "y" or directoryInput == "Y":
+        print("[*] Directory Fuzzing: ")
         dirWordlist = input("Enter the wordlist: ")
         try:
             dirWordlist = open(dirWordlist,"rb")
+            print(Fore.GREEN + "[+] Starting Directory Fuzzing")
             for path in dirWordlist.readlines():
                 path = path.strip().decode("utf-8")
                 try:
@@ -149,9 +149,9 @@ def directoryFuzz():
                     urlpath = "https://"+target+ "/"+path
                 r = requests.get(urlpath)
                 if r.status_code != 404:
-                    print("[+] {} -> {}".format(r.status_code, urlpath))
+                    print(Fore.GREEN + "[+] {} -> {}".format(r.status_code, urlpath))
         except Exception as e:
-            print("Error Occured: {}".format(e))
+            print(Fore.RED + "Error Occured: {}".format(e))
         
     else:
         print("\n")
