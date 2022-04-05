@@ -61,7 +61,7 @@ def getIPInfo():
 
 def scanPorts():
     choice = input(Fore.RED + "Would you like to scan for open ports? (Y/N): ")
-    if choice == "y" or choice == "Y":
+    if choice in ("y", "Y"):
         ports = [21, 22, 23, 25, 53, 80, 110,
                  111, 135, 139, 143, 443, 445, 993, 995, 1723, 3306, 3389, 5900, 8080]
 
@@ -88,7 +88,7 @@ def cloudflareScan():
 
 def shodanLookUp():
     shodanInput = input(Fore.RED + "\nWould you like to scan website using Shodan? (Y/N): ")
-    if shodanInput == "y" or shodanInput == "Y":
+    if shodanInput in ("y", "Y"):
         host = api.host(IPAddr)
 
         # Print general info
@@ -109,7 +109,7 @@ def shodanLookUp():
 def subDomainEnum():
     subdomainInput = input(
         Fore.RED + "\nWould you like to start a subdomain enumeration? (Y/N): ")
-    if subdomainInput == "y" or subdomainInput == "Y":
+    if subdomainInput in ("y", "Y"):
         print(Fore.RED + "\n[*] Subdomain Enumeration:")
         list = input("Enter wordlist location: ")
         file = open(list).read()
@@ -135,7 +135,7 @@ def subDomainEnum():
 
 def directoryFuzz():
     directoryInput = input(Fore.RED + "Would you like to fuzz directories? (Y/N): ")
-    if directoryInput == "y" or directoryInput == "Y":
+    if directoryInput in ("y", "Y"):
         print("[*] Directory Fuzzing: ")
         dirWordlist = input("Enter the wordlist: ")
         try:
